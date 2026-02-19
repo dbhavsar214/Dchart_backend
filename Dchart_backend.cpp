@@ -1,13 +1,12 @@
-﻿// Dchart_backend.cpp : Defines the entry point for the application.
-//
-
-#include "Dchart_backend.h"
+﻿#include "Dchart_backend.h"
+#include "PriceGenerator.h"
 
 
 using namespace std;
 
 int main()
 {
-	cout << "Hello Dchart." << endl;
-	return 0;
+	cout << "Price Logging Starts" << endl;
+	startPriceGenerator();
+
 }

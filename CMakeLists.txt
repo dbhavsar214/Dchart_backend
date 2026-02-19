@@ -14,7 +14,7 @@ project ("Dchart_backend")
 find_package(fmt CONFIG REQUIRED) 
 find_package(libwebsockets CONFIG REQUIRED)
 # Add source to this project's executable.
-add_executable (Dchart_backend "Dchart_backend.cpp" "Dchart_backend.h")
+add_executable (Dchart_backend "Dchart_backend.cpp" "Dchart_backend.h" "PriceGenerator.h" "PriceGenerator.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Dchart_backend PROPERTY CXX_STANDARD 20)
