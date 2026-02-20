@@ -24,7 +24,7 @@ add_executable (Dchart_backend
                         "PriceGenerator.h" 
                         "PriceGenerator.cpp" 
                         "WebSocketConnection.h" 
-                        "WebSocketConnection.cpp")
+                        "WebSocketConnection.cpp" "PriceStreamer.cpp" "PriceStreamer.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Dchart_backend PROPERTY CXX_STANDARD 20)

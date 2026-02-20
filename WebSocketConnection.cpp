@@ -1,16 +1,5 @@
 #include "WebSocketConnection.h"
-
-#include <libwebsockets.h>
-#include <boost/log/trivial.hpp>
-#include <chrono>
-#include <cstring>
-
-
-struct WsSession {
-    bool authenticated = false;
-    std::chrono::steady_clock::time_point lastSeen;
-    std::string outgoingMessage;
-};
+#include "PriceStreamer.h"
 
 
 int WebSocketConnection::callback(struct lws* wsi,
@@ -24,8 +13,16 @@ int WebSocketConnection::callback(struct lws* wsi,
     switch (reason) {
 
     case LWS_CALLBACK_ESTABLISHED: {
+  
+        session->active = true;
         session->lastSeen = std::chrono::steady_clock::now();
+
+
         BOOST_LOG_TRIVIAL(info) << "Client connected";
+
+        std::thread streamer(startPriceStreamer, session, wsi, "XYZ", 105.0, 0.5, 500);
+        streamer.detach();
+
         break;
     }
 
@@ -38,7 +35,7 @@ int WebSocketConnection::callback(struct lws* wsi,
      
         if (msg == "ping") {
             session->outgoingMessage = "pong";
-            BOOST_LOG_TRIVIAL(info) << "Pong Message Sent";
+
             lws_callback_on_writable(wsi);
         }
         else {
@@ -48,9 +45,11 @@ int WebSocketConnection::callback(struct lws* wsi,
     }
 
     case LWS_CALLBACK_SERVER_WRITEABLE: {
+        std::lock_guard<std::mutex> lock(session->mtx);
         if (!session->outgoingMessage.empty()) {
-            std::string& payload = session->outgoingMessage;
 
+            std::string& payload = session->outgoingMessage;
+          
             unsigned char buffer[LWS_PRE + 512];
             unsigned char* p = &buffer[LWS_PRE];
 
@@ -59,13 +58,14 @@ int WebSocketConnection::callback(struct lws* wsi,
 
             lws_write(wsi, p, n, LWS_WRITE_TEXT);
             BOOST_LOG_TRIVIAL(info) << "Sent message: " << payload;
-
             session->outgoingMessage.clear();
+            
         }
         break;
     }
 
     case LWS_CALLBACK_CLOSED: {
+        session->active = false;
         BOOST_LOG_TRIVIAL(info) << "Client disconnected";
         break;
     }

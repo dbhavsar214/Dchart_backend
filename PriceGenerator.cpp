@@ -8,14 +8,3 @@ double PriceGenerator(double price, double std) {
 
     return price + change(gen);
 }
-
-void startPriceGenerator() {
-
-    double price = 105.000;
-
-    while (true) {
-        price = PriceGenerator(price, 0.5);
-        std::cout << price << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-}
