@@ -7,4 +7,3 @@
 #include<iostream>
 
 double PriceGenerator(double price, double std);
-void startPriceGenerator();

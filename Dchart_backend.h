@@ -4,6 +4,6 @@
 #pragma once
 
 #include <iostream>
-#include "PriceGenerator.h"
+#include <boost/log/trivial.hpp>
 
 // TODO: Reference additional headers your program requires here.
